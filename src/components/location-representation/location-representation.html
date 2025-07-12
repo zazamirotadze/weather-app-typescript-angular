@@ -1,0 +1,24 @@
+@if (isLoaded()) {
+    @if (supportedLanguage() && supportedLocation() && weatherData()) {
+        <div class='menu'>
+            <div>
+                <h1>{{translatedLocationName()}}</h1>
+                <app-render-weather-icon [iconSize]="100" [weatherCondition]="currenctWeather"/>
+                <app-render-weather-info [weatherForSpecificDay]="currenctWeather" [infos]="['temp', 'feels_like', 'humidity', 'pressure', 'windSpeed']"  [supportedLanguage]="supportedLanguage"/>
+            </div>
+            <div>  
+                @for (futureWeather of futureWeathers(); track futureWeather().dt_txt) {
+                    <div class='info'>
+                        <div><h2>{{convertIntoGeorgianDate(futureWeather().dt_txt, supportedLanguage()?.name || null) }}</h2></div>
+                        <div><app-render-weather-icon [iconSize]="40" [weatherCondition]="futureWeather"/></div>
+                        <div><app-render-weather-info [weatherForSpecificDay]="futureWeather" [infos]="['temp']" [supportedLanguage]="supportedLanguage"/></div>
+                    </div>
+                } @empty {
+                    <h2>{{translations.dataCanNotbeFetched[supportedLanguage()?.name ?? 'ka']}}</h2>
+                }
+            </div>  
+        </div>
+    }@else {
+        <h2>{{translations.dataCanNotbeFetched[supportedLanguage()?.name ?? 'ka']}}</h2>
+    }
+}

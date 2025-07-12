@@ -1,0 +1,30 @@
+@switch (weatherCondition()?.weather?.[0]?.main || null) {
+  @case ('Clear') {
+    @if ((currentHour>=0 && currentHour <7) || currentHour> 18 ) {
+      <i class="bi bi-moon-stars-fill" [style.fontSize.px]="iconSize" style="color: orange"></i>
+    }@else {
+      <fa-icon [icon]="faIcons.faSun" [style.fontSize.px]="iconSize" style="color: orange;"/>
+    }
+  }
+  @case ('Clouds') {
+    <fa-icon [icon]="faIcons.faCloud" [style.fontSize.px]="iconSize" style="color: darkgray;"/>
+  }
+  @case ('Rain') {
+    <fa-icon [icon]="faIcons.faCloudRain" [style.fontSize.px]="iconSize" style="color: darkblue;"/>
+  }
+  @case ('Snow') {
+    <fa-icon [icon]="faIcons.faSnowflake" [style.fontSize.px]="iconSize" style="color: cyan;"/>
+  }
+  @case ('Mist') {
+    <i class="bi bi-cloud-fog2" [style.fontSize.px]="iconSize" style="color: grey;"></i>
+  }
+  @case ('Drizzle') {
+    <i class="bi bi-cloud-drizzle-fill" [style.fontSize.px]="iconSize" style="color: grey;"></i>
+  }
+  @case ('Fog') {
+    <i class="bi bi-cloud-fog-fill" [style.fontSize.px]="iconSize" style="color: grey;"></i>
+  }
+  @default {
+    <fa-icon [icon]="faIcons.faSun" [style.fontSize.px]="iconSize" style="color: orange;"/>
+  }
+}

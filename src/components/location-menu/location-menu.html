@@ -1,0 +1,13 @@
+
+<button class="menu-button" (click)='isOpen.set(!isOpen())'>{{translations.chooseLocation[supportedLanguage()?.name ?? 'ka']}}</button>
+@if (isOpen()) {
+    <div class="options-container" (clickOutside)="isOpen.set(false)">
+        @for (location of locations; track location.name) {
+            <div 
+                class="option"
+                (click)='isOpen.set(false); setLocation(location.name);'>
+                {{translations.locations[location.name][supportedLanguage()?.name ?? 'ka']}}
+            </div> 
+        }
+    </div>
+}

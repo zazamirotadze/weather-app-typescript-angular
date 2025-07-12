@@ -1,0 +1,11 @@
+<button class="menu-button" (click)='isOpen.set(!isOpen())'>{{translations.chooseLanguage[supportedLanguage()?.name ?? 'ka']}}</button>
+@if (isOpen()) {
+    <div class="options-container" (clickOutside)="isOpen.set(false)">
+        @for (language of languages; track language) {
+            <div class="option" (click)='isOpen.set(false); setLanguage(language.name);'>
+                <img [src]="language.iconUrl" alt="language.name"  width='24' height='16'/> 
+            </div>
+        }
+    </div>
+}
+
