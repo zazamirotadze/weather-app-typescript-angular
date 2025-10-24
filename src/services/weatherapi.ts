@@ -10,10 +10,8 @@ export class Weatherapi {
   constructor(private http: HttpClient) {}
   
   detData(supportedLocation: Omit<Location, 'name'> ){
-    if (environment.weatherApiKey){
-      if (!environment.weatherApiKey) {
-        return throwError(() => new Error('API key is missing'));
-      }
+    if (!environment.weatherApiKey) {
+      return throwError(() => new Error('API key is missing'));
     }
 
     return this.http.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${supportedLocation.lat}&lon=${supportedLocation.lon}&appid=${environment.weatherApiKey}&units=metric`);
