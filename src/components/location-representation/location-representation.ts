@@ -19,24 +19,27 @@ export class LocationRepresentation {
   convertIntoGeorgianDate = convertIntoGeorgianDate;
   translations = translations;
 
-  @Input() supportedLocation!: Signal<null | Location>;
+  @Input() supportedLocation!: Signal<null | undefined | Location>;
   @Input() supportedLanguage!: Signal<null | Language>;
   @Input() isLoaded!: WritableSignal<boolean>;
 
   translatedLocationName = computed(() => this.translations.locations[this.supportedLocation()?.name as SupportedLocations][this.supportedLanguage()?.name as SupportedLanguages]);
   constructor(private weatherApi: Weatherapi) {
     effect(() => {
-      if (!this.supportedLocation()) {
-          timer(1000).subscribe(() => {
-            if (!this.supportedLocation()) {
-                    this.weatherData.set(null)
-            this.isLoaded.set(true)
-            }
-        });
+      // supportedLocation ჯერ არ გამოთვლილა ლოკაცია რომლის მიხედვითაც 
+      // უნდა მოვიტანოთ მონაცემები აპლიკაციური სამოქმედო ველიდან 
+      // ამის აღსანიშნავად გამოიყენება მნიშვნელობა undefined
+      if (this.supportedLocation() === undefined) {
         return;
       }
-      
-          this.weatherApi.detData({ lat: this.supportedLocation()!.lat, lon: this.supportedLocation()!.lon })
+      if (this.supportedLocation() === null) {
+        this.weatherData.set(null)
+        this.isLoaded.set(true)
+
+        return;
+      }
+
+      this.weatherApi.detData({ lat: this.supportedLocation()!.lat, lon: this.supportedLocation()!.lon })
         .pipe(finalize(() => this.isLoaded.set(true)))
         .subscribe({
           next: (data: any) => {
@@ -56,6 +59,6 @@ export class LocationRepresentation {
             this.weatherData.set(null);
           }
         });
-      })
+    })
   }
 }

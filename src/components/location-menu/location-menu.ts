@@ -17,7 +17,7 @@ export class LocationMenu {
   isOpen: WritableSignal<boolean> = signal(false); 
 
   @Input() selectedLocationName! : WritableSignal<null | string>;
-  @Input() supportedLocation! : Signal<null | Location>;
+  @Input() supportedLocation! : Signal<null | undefined | Location>;
   @Input() supportedLanguage! : Signal<null | Language>;
   @Input() isLoaded! : WritableSignal<boolean>;
 

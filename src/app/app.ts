@@ -2,11 +2,12 @@ import { Component, OnInit, signal, WritableSignal, computed } from '@angular/co
 import { languages } from '../data/languages';
 import { LanguageMenu } from '../components/languages-menu/language-menu';
 import { LocationMenu } from '../components/location-menu/location-menu';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { LocationRepresentation } from '../components/location-representation/location-representation';
 import { locations } from '../data/locations';
 import { translations } from '../data/translations';
-import {  takeUntil, timer, toArray } from 'rxjs';
+import {  filter,take } from 'rxjs';
+import { Location } from '../types/weather.types';
 
 @Component({
   selector: 'app-root',
@@ -21,24 +22,32 @@ export class App implements OnInit {
   translations = translations;
 
   supportedLanguage = computed(() => languages.find(language => language.name === this.selectedLanguageName()) || null);
-  supportedLocation = computed(() => locations.find(location => location.name === this.selectedLocationName()) || null);
-  
-  ngOnInit(): void {
-  this.route.queryParamMap.pipe(
-    takeUntil(timer(0)),
-    toArray()
-  ).subscribe({
-    next: emissions => {
-      if (emissions.length === 1){
-        this.selectedLocationName.set( 'Tsrikvali');
-        this.selectedLanguageName.set( 'ka');
-      } else {
-        const lastParams = emissions[emissions.length - 1];
+  supportedLocation = computed<Location | undefined | null>(() => {
+    const name = this.selectedLocationName();
 
-        this.selectedLocationName.set(lastParams.get('location'));
-        this.selectedLanguageName.set(lastParams.get('language') || 'ka');
-      }  
-    }
+    if (!name) return undefined;
+
+    return locations.find(loc => loc.name === name) ?? null;
   });
-}
+  
+ 
+ ngOnInit(): void {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      take(1) 
+    ).subscribe(() => {
+      const 
+          params = this.route.snapshot.queryParamMap,
+          location = params.get('location'),
+          language = params.get('language');
+     
+      if (location == null && language == null && params.keys.length === 0) {
+        this.selectedLocationName.set('Tsrikvali');
+        this.selectedLanguageName.set('ka');
+      } else {
+        this.selectedLocationName.set(location || 'Tsrikvali');
+        this.selectedLanguageName.set(language || 'ka');
+      }
+    });
+  }
 }
