@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LocationRepresentation } from '../components/location-representation/location-representation';
 import { locations } from '../data/locations';
 import { translations } from '../data/translations';
+import {  takeUntil, timer, toArray } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -22,10 +23,22 @@ export class App implements OnInit {
   supportedLanguage = computed(() => languages.find(language => language.name === this.selectedLanguageName()) || null);
   supportedLocation = computed(() => locations.find(location => location.name === this.selectedLocationName()) || null);
   
-  ngOnInit(): void {   
-    this.route.queryParamMap.subscribe(params => {
-      this.selectedLocationName.set(params.get('location') || 'Tsrikvali');
-      this.selectedLanguageName.set(params.get('language') || 'ka');
-    });
-  }
+  ngOnInit(): void {
+  this.route.queryParamMap.pipe(
+    takeUntil(timer(0)),
+    toArray()
+  ).subscribe({
+    next: emissions => {
+      if (emissions.length === 1){
+        this.selectedLocationName.set( 'Tsrikvali');
+        this.selectedLanguageName.set( 'ka');
+      } else {
+        const lastParams = emissions[emissions.length - 1];
+
+        this.selectedLocationName.set(lastParams.get('location'));
+        this.selectedLanguageName.set(lastParams.get('language') || 'ka');
+      }  
+    }
+  });
+}
 }

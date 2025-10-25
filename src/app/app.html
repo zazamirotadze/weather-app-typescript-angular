@@ -1,6 +1,6 @@
 <div>
     <div class="menu">
-       <div><app-location-menu [selectedLocationName]="selectedLocationName" [supportedLocation]="supportedLocation" [supportedLanguage]="supportedLanguage"/></div> 
+       <div><app-location-menu  [isLoaded]="isLoaded" [selectedLocationName]="selectedLocationName" [supportedLocation]="supportedLocation" [supportedLanguage]="supportedLanguage"/></div> 
         <div><app-language-menu [selectedLanguageName]="selectedLanguageName" [supportedLanguage]="supportedLanguage"/></div> 
     </div>
     @if (!isLoaded()) {

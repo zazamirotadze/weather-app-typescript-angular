@@ -19,9 +19,11 @@ export class LocationMenu {
   @Input() selectedLocationName! : WritableSignal<null | string>;
   @Input() supportedLocation! : Signal<null | Location>;
   @Input() supportedLanguage! : Signal<null | Language>;
+  @Input() isLoaded! : WritableSignal<boolean>;
 
   setLocation(locationName: string) {
     this.selectedLocationName.set(locationName);
+    this.isLoaded.set(false);
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { location: locationName },

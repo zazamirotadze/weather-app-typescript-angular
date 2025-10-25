@@ -27,10 +27,15 @@ export class LocationRepresentation {
   constructor(private weatherApi: Weatherapi) {
     effect(() => {
       if (!this.supportedLocation()) {
-        this.weatherData.set(null);
+          timer(1000).subscribe(() => {
+            if (!this.supportedLocation()) {
+                    this.weatherData.set(null)
+            this.isLoaded.set(true)
+            }
+        });
         return;
       }
-      timer(0).subscribe(() => {
+      
           this.weatherApi.detData({ lat: this.supportedLocation()!.lat, lon: this.supportedLocation()!.lon })
         .pipe(finalize(() => this.isLoaded.set(true)))
         .subscribe({
@@ -52,6 +57,5 @@ export class LocationRepresentation {
           }
         });
       })
-    });
   }
 }
